@@ -11,17 +11,17 @@ Ext.define('CustomApp', {
 
       console.log('our second app');     // see console api: https://developers.google.com/chrome-developer-tools/docs/console-api
 
-	  this.pulldownContainer = Ext.create('Ext.container.Container',{
+	this.pulldownContainer = Ext.create('Ext.container.Container',{
 		id: 'pulldown-container-id',
 		layout: {
 			type: 'hbox',
 			align: 'stretch'
-		},
-	  });
-	  
-	  this.add(this.pulldownContainer);
-	  
-	  this._loadIterations();
+		}
+	});
+	
+	this.add(this.pulldownContainer);
+	
+	this._loadIterations();
     },
 	_loadIterations: function() {
 		this.iterComboBox = Ext.create('Rally.ui.combobox.IterationComboBox', {
@@ -66,11 +66,11 @@ Ext.define('CustomApp', {
     // Get data from Rally
     _loadData: function() {
 
-	 var selectedIterRef = this.iterComboBox.getRecord().get('_ref');
-	 var selectedSeverityValue = this.severityComboBox.getRecord().get('value');
+	var selectedIterRef = this.iterComboBox.getRecord().get('_ref');
+	var selectedSeverityValue = this.severityComboBox.getRecord().get('value');
 
-	 console.log('selected severity',selectedSeverityValue);
-	 console.log('selected iter',selectedIterRef);
+	console.log('selected severity',selectedSeverityValue);
+	console.log('selected iter',selectedIterRef);
 	var myFilters = [
 		{
 			property: 'Iteration',
@@ -82,31 +82,31 @@ Ext.define('CustomApp', {
 			operation: '=',
 			value: selectedSeverityValue
 		}
-	  ];
-	  if (this.defectStore) {
-	  
+	];
+	if (this.defectStore) {
+	
 		this.defectStore.setFilter(myFilters);
 		this.defectStore.load();
-	  
-	  //create store
-	  } else {
+	
+	//create store
+	} else {
 
      this.defectStore = Ext.create('Rally.data.wsapi.Store', {
           model: 'Defect',
           autoLoad: true,                         // <----- Don't forget to set this to true! heh
-		  filters: myFilters,
+		filters: myFilters,
           listeners: {
               load: function(myStore, myData, success) {
                   console.log('got data!', myStore, myData);
-				  if (!this.myGrid) {
+				if (!this.myGrid) {
                     this._createGrid(myStore);      // if we did NOT pass scope:this below, this line would be incorrectly trying to call _createGrid() on the store which does not exist.
-				  }
+				}
               },
               scope: this                         // This tells the wsapi data store to forward pass along the app-level context into ALL listener functions
           },
           fetch: ['FormattedID', 'Name', 'Severity','Iteration']   // Look in the WSAPI docs online to see all fields available!
         });
-	  }
+	}
     },
 
     // Create and Show a Grid of given stories
